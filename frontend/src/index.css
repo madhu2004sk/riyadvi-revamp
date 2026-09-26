@@ -37,3 +37,21 @@ a {
   background: #d4af37;
   color: #000000;
 }
+
+.health-input {
+  width: 100%;
+  border-radius: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  padding: 1rem 1.25rem;
+  color: white;
+  outline: none;
+}
+
+.health-input::placeholder {
+  color: rgb(107, 114, 128);
+}
+
+.health-input:focus {
+  border-color: #d4af37;
+}
