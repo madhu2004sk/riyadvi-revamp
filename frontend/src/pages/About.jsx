@@ -29,7 +29,7 @@ const milestones = [
 ];
 export default function About() {
     return (
-        <main className="bg-[#050505] pt-28">
+        <main className="bg-[#050505] pt-18">
             <Section>
                 <Heading
                     eyebrow="About Riyadvi"

@@ -1,5 +1,5 @@
-import Section from "../components/Section";
-import Heading from "../components/Heading";
+import Section from "../components/Section.jsx";
+import Heading from "../components/Heading.jsx";
 const technologies = [
     "Frontend",
     "Backend",

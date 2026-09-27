@@ -10,7 +10,6 @@ import { useRef } from "react";
 
 function CentralObject() {
     const meshRef = useRef();
-    const isMobile = window.innerWidth < 768;
 
     useFrame((state) => {
         if (!meshRef.current) return;
@@ -67,7 +66,7 @@ function Scene() {
             <Stars
                 radius={50}
                 depth={30}
-                count={isMobile ? 300 : 1000}
+                count={1200}
                 factor={2}
                 saturation={0}
                 fade

@@ -4,7 +4,7 @@ import Heading from "../components/Heading";
 import projects from "../data/projects";
 export default function Portfolio() {
     return (
-        <main className="bg-[#050505] pt-28">
+        <main className="bg-[#050505] pt-10">
             <Section>
                 <Heading
                     eyebrow="Portfolio"

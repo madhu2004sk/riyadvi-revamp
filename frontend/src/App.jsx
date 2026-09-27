@@ -4,6 +4,7 @@ import { lazy, Suspense } from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import SmoothScroll from "./components/SmoothScroll";
+import ScrollToTop from "./components/ScrollToTop";
 
 import Home from "./pages/Home";
 import Services from "./pages/Services";
@@ -34,6 +35,7 @@ export default function App() {
           </div>
         }
       >
+        <ScrollToTop />
        <Routes>
 
         <Route path="/" element={<Home />} />
