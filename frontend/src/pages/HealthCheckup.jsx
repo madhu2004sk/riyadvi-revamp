@@ -1,5 +1,6 @@
 import { useState } from "react";
 import Section from "../components/Section";
+import api from "../services/api";
 const steps = [
     "Business Information",
     "Current Technology",
@@ -13,14 +14,17 @@ export default function HealthCheckup() {
     const [formData, setFormData] = useState({
         businessName: "",
         industry: "",
-        technology: "",
-        challenge: "",
-        goal: "",
+        currentTechnology: "",
+        businessChallenges: "",
+        goals: "",
         name: "",
         email: "",
         phone: "",
     });
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState("");
+    const [error, setError] = useState("");
     function updateField(field, value) {
         setFormData((current) => ({
             ...current,
@@ -37,8 +41,25 @@ export default function HealthCheckup() {
             setStep((current) => current - 1);
         }
     }
-    function submitForm() {
-        setSubmitted(true);
+    async function submitHealthCheckup() {
+        try {
+            setLoading(true);
+            setSuccess("");
+            setError("");
+            const response = await api.post(
+                "/health-checkup",
+                formData
+            );
+            setSuccess(response.data.message);
+            setSubmitted(true);
+        } catch (error) {
+            setError(
+                error.response?.data?.message ||
+                "Unable to submit health checkup."
+            );
+        } finally {
+            setLoading(false);
+        }
     }
     if (submitted) {
         return (
@@ -53,9 +74,8 @@ text-center">
                             Health Checkup Submitted
                         </h1>
                         <p className="mt-4 leading-7 text-gray-400">
-                            Thank you for sharing your business information.
-                            The backend submission and database storage will be
-                            connected on Day 3.
+                            {success ||
+                                "Thank you for sharing your business information."}
                         </p>
                     </div>
                 </Section>
@@ -98,6 +118,7 @@ text-center">
                                 {steps[step]}
                             </h2>
                             <div className="mt-8">
+                                {/* STEP 1 */}
                                 {step === 0 && (
                                     <div className="space-y-4">
                                         <input
@@ -124,12 +145,13 @@ text-center">
                                         />
                                     </div>
                                 )}
+                                {/* STEP 2 */}
                                 {step === 1 && (
                                     <textarea
-                                        value={formData.technology}
+                                        value={formData.currentTechnology}
                                         onChange={(e) =>
                                             updateField(
-                                                "technology",
+                                                "currentTechnology",
                                                 e.target.value
                                             )
                                         }
@@ -138,12 +160,13 @@ text-center">
                                         className="health-input"
                                     />
                                 )}
+                                {/* STEP 3 */}
                                 {step === 2 && (
                                     <textarea
-                                        value={formData.challenge}
+                                        value={formData.businessChallenges}
                                         onChange={(e) =>
                                             updateField(
-                                                "challenge",
+                                                "businessChallenges",
                                                 e.target.value
                                             )
                                         }
@@ -152,12 +175,13 @@ text-center">
                                         className="health-input"
                                     />
                                 )}
+                                {/* STEP 4 */}
                                 {step === 3 && (
                                     <textarea
-                                        value={formData.goal}
+                                        value={formData.goals}
                                         onChange={(e) =>
                                             updateField(
-                                                "goal",
+                                                "goals",
                                                 e.target.value
                                             )
                                         }
@@ -166,6 +190,7 @@ text-center">
                                         className="health-input"
                                     />
                                 )}
+                                {/* STEP 5 */}
                                 {step === 4 && (
                                     <div className="space-y-4">
                                         <input
@@ -204,6 +229,7 @@ text-center">
                                         />
                                     </div>
                                 )}
+                                {/* STEP 6 */}
                                 {step === 5 && (
                                     <div className="rounded-2xl border border-white/10 p-6">
                                         <h3 className="text-xl font-semibold">
@@ -213,6 +239,12 @@ text-center">
                                             Review your information and submit your
                                             Business Health Checkup.
                                         </p>
+                                        {error && (
+                                            <p className="mt-5 rounded-xl border border-red-500/20 bg-red-500/10 p-4
+text-sm text-red-400">
+                                                {error}
+                                            </p>
+                                        )}
                                     </div>
                                 )}
                             </div>
@@ -220,7 +252,7 @@ text-center">
                                 <button
                                     type="button"
                                     onClick={previousStep}
-                                    disabled={step === 0}
+                                    disabled={step === 0 || loading}
                                     className="rounded-full border border-white/10 px-6 py-3 text-sm
 disabled:opacity-30"
                                 >
@@ -238,11 +270,14 @@ text-black"
                                 ) : (
                                     <button
                                         type="button"
-                                        onClick={submitForm}
+                                        onClick={submitHealthCheckup}
+                                        disabled={loading}
                                         className="rounded-full bg-[#d4af37] px-6 py-3 text-sm font-semibold
-text-black"
+text-black disabled:cursor-not-allowed disabled:opacity-50"
                                     >
-                                        Submit Checkup
+                                        {loading
+                                            ? "Submitting..."
+                                            : "Submit Checkup"}
                                     </button>
                                 )}
                             </div>

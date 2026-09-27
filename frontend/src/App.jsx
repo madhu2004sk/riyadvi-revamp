@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import { lazy, Suspense } from "react";
 
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
@@ -16,6 +17,7 @@ import Careers from "./pages/Careers";
 import JobDetails from "./pages/JobDetails";
 import Contact from "./pages/Contact";
 import HealthCheckup from "./pages/HealthCheckup";
+import Admin from "./pages/Admin";
 
 export default function App() {
   return (
@@ -25,7 +27,14 @@ export default function App() {
 
       <Navbar />
 
-      <Routes>
+      <Suspense
+        fallback={
+          <div className="flex min-h-screen items-center justify-center bg-black text-white">
+            Loading...
+          </div>
+        }
+      >
+       <Routes>
 
         <Route path="/" element={<Home />} />
 
@@ -81,8 +90,10 @@ export default function App() {
           element={<HealthCheckup />}
         />
 
-      </Routes>
+        <Route path="/admin" element={<Admin />} />
 
+       </Routes>
+      </Suspense>
       <Footer />
     </>
   );

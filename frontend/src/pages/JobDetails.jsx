@@ -2,12 +2,22 @@ import { useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import Section from "../components/Section";
 import jobs from "../data/jobs";
+import api from "../services/api";
 export default function JobDetails() {
     const { slug } = useParams();
     const job = jobs.find(
         (item) => item.slug === slug
     );
+    const [form, setForm] = useState({
+        name: "",
+        email: "",
+        phone: "",
+        coverLetter: "",
+    });
     const [submitted, setSubmitted] = useState(false);
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState("");
+    const [error, setError] = useState("");
     if (!job) {
         return (
             <main className="min-h-screen bg-[#050505] pt-32">
@@ -19,9 +29,44 @@ export default function JobDetails() {
             </main>
         );
     }
-    function handleSubmit(event) {
+    function handleChange(event) {
+        setForm({
+            ...form,
+            [event.target.name]: event.target.value,
+        });
+    }
+    async function handleApplication(event) {
         event.preventDefault();
-        setSubmitted(true);
+        setLoading(true);
+        setSuccess("");
+        setError("");
+        try {
+            const response = await api.post("/applications", {
+                name: form.name,
+                email: form.email,
+                phone: form.phone,
+                position: job.designation,
+                experience: job.experience,
+                skills: job.requirements.join(", "),
+                resume: "",
+                coverLetter: form.coverLetter,
+            });
+            setSuccess(response.data.message);
+            setSubmitted(true);
+            setForm({
+                name: "",
+                email: "",
+                phone: "",
+                coverLetter: "",
+            });
+        } catch (error) {
+            setError(
+                error.response?.data?.message ||
+                "Application submission failed."
+            );
+        } finally {
+            setLoading(false);
+        }
     }
     return (
         <main className="bg-[#050505] pt-28">
@@ -80,48 +125,76 @@ export default function JobDetails() {
                         </h2>
                         {submitted ? (
                             <div className="mt-8 rounded-xl border border-[#d4af37]/30 p-6">
-                                <p className="text-[#d4af37]">
-                                    Application form submitted successfully.
+                                <div className="text-3xl text-[#d4af37]">
+                                    ✓
+                                </div>
+                                <p className="mt-4 text-[#d4af37]">
+                                    {success ||
+                                        "Application submitted successfully."}
                                 </p>
                                 <p className="mt-2 text-sm text-gray-400">
-                                    Backend application storage will be connected on Day 3.
+                                    Thank you for applying. We will review your
+                                    application and get back to you.
                                 </p>
                             </div>
                         ) : (
                             <form
-                                onSubmit={handleSubmit}
+                                onSubmit={handleApplication}
                                 className="mt-7 space-y-4"
                             >
                                 <input
                                     required
+                                    name="name"
+                                    value={form.name}
+                                    onChange={handleChange}
                                     placeholder="Full Name"
                                     className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4
 outline-none focus:border-[#d4af37]"
                                 />
                                 <input
                                     required
+                                    name="email"
                                     type="email"
+                                    value={form.email}
+                                    onChange={handleChange}
                                     placeholder="Email"
                                     className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4
 outline-none focus:border-[#d4af37]"
                                 />
                                 <input
                                     required
+                                    name="phone"
+                                    value={form.phone}
+                                    onChange={handleChange}
                                     placeholder="Phone"
                                     className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4
 outline-none focus:border-[#d4af37]"
                                 />
                                 <textarea
+                                    required
+                                    name="coverLetter"
+                                    value={form.coverLetter}
+                                    onChange={handleChange}
                                     rows="5"
                                     placeholder="Tell us about yourself"
                                     className="w-full rounded-xl border border-white/10 bg-white/[0.03] px-5 py-4
 outline-none focus:border-[#d4af37]"
                                 />
+                                {error && (
+                                    <p className="rounded-xl border border-red-500/20 bg-red-500/10 p-4 text-sm
+text-red-400">
+                                        {error}
+                                    </p>
+                                )}
                                 <button
                                     type="submit"
-                                    className="w-full rounded-xl bg-[#d4af37] px-6 py-4 font-semibold text-black"
+                                    disabled={loading}
+                                    className="w-full rounded-xl bg-[#d4af37] px-6 py-4 font-semibold text-black
+disabled:cursor-not-allowed disabled:opacity-50"
                                 >
-                                    Submit Application
+                                    {loading
+                                        ? "Submitting..."
+                                        : "Submit Application"}
                                 </button>
                             </form>
                         )}

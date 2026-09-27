@@ -6,6 +6,7 @@ import TechnologyEcosystem from "../sections/TechnologyEcosystem";
 import WhyRiyadvi from "../sections/WhyRiyadvi";
 import PortfolioPreview from "../sections/PortfolioPreview";
 import HealthCheckupCTA from "../sections/HealthCheckupCTA";
+import LeadMagnet from "../sections/LeadMagnet";
 import BlogPreview from "../sections/BlogPreview";
 import FinalCTA from "../sections/FinalCTA";
 
@@ -20,6 +21,7 @@ export default function Home() {
             <WhyRiyadvi />
             <PortfolioPreview />
             <HealthCheckupCTA />
+            <LeadMagnet />
             <BlogPreview />
             <FinalCTA />
         </>

@@ -1,12 +1,17 @@
 import { Canvas, useFrame } from "@react-three/fiber";
+
 import {
     Float,
     OrbitControls,
     Stars,
 } from "@react-three/drei";
+
 import { useRef } from "react";
+
 function CentralObject() {
     const meshRef = useRef();
+    const isMobile = window.innerWidth < 768;
+
     useFrame((state) => {
         if (!meshRef.current) return;
         meshRef.current.rotation.x =
@@ -14,6 +19,7 @@ function CentralObject() {
         meshRef.current.rotation.y =
             state.clock.elapsedTime * 0.4;
     });
+
     return (
         <mesh ref={meshRef}>
             <icosahedronGeometry args={[1.6, 2]} />
@@ -26,6 +32,7 @@ function CentralObject() {
         </mesh>
     );
 }
+
 function FloatingNode({ position, scale = 0.08 }) {
     return (
         <Float
@@ -44,6 +51,7 @@ function FloatingNode({ position, scale = 0.08 }) {
         </Float>
     );
 }
+
 function Scene() {
     return (
         <>
@@ -59,7 +67,7 @@ function Scene() {
             <Stars
                 radius={50}
                 depth={30}
-                count={1200}
+                count={isMobile ? 300 : 1000}
                 factor={2}
                 saturation={0}
                 fade
@@ -81,6 +89,7 @@ function Scene() {
         </>
     );
 }
+
 export default function Hero3D() {
     return (
         <div className="absolute inset-0">
